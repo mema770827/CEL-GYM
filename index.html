@@ -1,78 +1,264 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitTrack Pro - Tu Agenda de Entrenamiento</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitTrack Pro - Tu Agenda de Entrenamiento</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 40px; }
+
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn {
+      background: white;
+      color: var(--primary);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+    }
+
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .hero { text-align: center; margin-bottom: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+
+    .card {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+    input, textarea {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Dashboard Styles */
+    .timer-display { font-size: 2.5rem; font-weight: bold; text-align: center; margin: 1rem 0; }
+    .timer-controls { display: flex; gap: 0.5rem; justify-content: center; }
+    .list-item { background: #f1f5f9; padding: 0.5rem; border-radius: 4px; margin-top: 0.5rem; }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body>
 
-    <!-- Navegación -->
-    <nav class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center">
-        <h1 class="text-2xl font-bold">FitTrack Pro</h1>
-        <button class="bg-white text-blue-600 px-4 py-2 rounded font-semibold hover:bg-gray-100">Iniciar Sesión</button>
-    </nav>
+  <header>
+    <h2>FitTrack Pro</h2>
+    <button id="auth-nav-btn" class="btn" onclick="toggleAuthModal()">Iniciar Sesión</button>
+  </header>
 
-    <!-- Sección de Precios y Registro -->
-    <main class="max-w-4xl mx-auto mt-10 p-6">
-        <div class="text-center mb-12">
-            <h2 class="text-4xl font-extrabold text-gray-900 mb-4">Transforma tu Rutina Hoy</h2>
-            <p class="text-lg text-gray-600">Cronómetro integrado, cálculo de calorías, almacenamiento de dietas y rutinas personalizadas. Todo en una sola cuenta.</p>
+  <!-- PÁGINA PRINCIPAL / LANDING -->
+  <main id="landing-view" class="container">
+    <section class="hero">
+      <h1>Transforma tu Rutina Hoy</h1>
+      <p style="color: var(--text-muted); margin-top: 0.5rem;">
+        Cronómetro integrado, cálculo de calorías, almacenamiento de dietas y rutinas personalizadas.
+      </p>
+    </section>
+
+    <div class="grid">
+      <!-- Formulario de Registro -->
+      <div class="card">
+        <h3>Crea tu Cuenta</h3>
+        <form id="register-form" onsubmit="handleRegister(event)" style="margin-top: 1rem;">
+          <div class="form-group">
+            <label for="reg-email">Correo Electrónico</label>
+            <input type="email" id="reg-email" required placeholder="tu@email.com">
+          </div>
+          <div class="form-group">
+            <label for="reg-pass">Contraseña</label>
+            <input type="password" id="reg-pass" required placeholder="******">
+          </div>
+          <div class="form-group">
+            <label for="reg-weight">Peso actual (kg)</label>
+            <input type="number" id="reg-weight" required placeholder="70">
+          </div>
+          <button type="submit" class="btn btn-primary">Registrarse e Ingresar</button>
+        </form>
+      </div>
+
+      <!-- Planes / Suscripción -->
+      <div class="card">
+        <h3>Suscripción Premium</h3>
+        <p style="font-size: 2rem; font-weight: bold; color: var(--primary); margin: 0.5rem 0;">$199 <span style="font-size: 1rem; color: var(--text-muted);">/ mes</span></p>
+        <ul style="list-style: none; margin-bottom: 1rem;">
+          <li>✅ Agenda de rutinas ilimitada</li>
+          <li>✅ Cronómetro y medidor de calorías</li>
+          <li>✅ Almacenamiento de dietas personalizadas</li>
+        </ul>
+        <button class="btn btn-primary" onclick="alert('Pasarela de pagos pendiente de integración.')">Suscribirse y Pagar</button>
+        <small style="display:block; text-align:center; margin-top:0.5rem; color:var(--text-muted);">Pagos procesados de forma segura.</small>
+      </div>
+    </div>
+  </main>
+
+  <!-- PANEL DE USUARIO (DASHBOARD) -->
+  <main id="dashboard-view" class="container hidden">
+    <h2>Bienvenido a tu Panel de Entrenamiento</h2>
+    <p id="user-info" style="color: var(--text-muted); margin-bottom: 1.5rem;"></p>
+
+    <div class="grid">
+      <!-- Calculadora de Calorías -->
+      <div class="card">
+        <h3>Calculadora de Calorías Básica</h3>
+        <div class="form-group" style="margin-top: 1rem;">
+          <label>Minutos de ejercicio realizados:</label>
+          <input type="number" id="workout-mins" placeholder="Ej. 45">
         </div>
+        <button class="btn btn-primary" onclick="calculateCalories()">Calcular Quemadas</button>
+        <p id="calorie-result" style="margin-top: 1rem; font-weight: bold;"></p>
+      </div>
 
-        <div class="bg-white rounded-lg shadow-xl overflow-hidden md:flex">
-            <!-- Formulario de Registro -->
-            <div class="md:w-1/2 p-8 border-r">
-                <h3 class="text-2xl font-bold mb-4">Crea tu Cuenta</h3>
-                <form id="signup-form" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                        <input type="email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Contraseña</label>
-                        <input type="password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Peso actual (kg) - Para calcular calorías</label>
-                        <input type="number" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
-                    </div>
-                </form>
-            </div>
-
-            <!-- Resumen de Suscripción -->
-            <div class="md:w-1/2 p-8 bg-gray-50 flex flex-col justify-center">
-                <h3 class="text-2xl font-bold mb-2 text-center">Suscripción Premium</h3>
-                <p class="text-4xl font-extrabold text-center text-blue-600 mb-6">$199 <span class="text-lg text-gray-500 font-medium">/ mes</span></p>
-                
-                <ul class="space-y-3 mb-8">
-                    <li class="flex items-center">✅ <span class="ml-2">Agenda de rutinas ilimitada</span></li>
-                    <li class="flex items-center">✅ <span class="ml-2">Cronómetro y medidor de calorías</span></li>
-                    <li class="flex items-center">✅ <span class="ml-2">Almacenamiento de dietas personalizadas</span></li>
-                    <li class="flex items-center">✅ <span class="ml-2">Acceso multiplataforma</span></li>
-                </ul>
-
-                <!-- Botón de Pago (Aquí se conecta Stripe o Mercado Pago) -->
-                <button id="checkout-button" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded hover:bg-blue-700 transition duration-300">
-                    Suscribirse y Pagar
-                </button>
-                <p class="text-xs text-gray-400 mt-4 text-center">Pagos seguros procesados por Stripe / Mercado Pago. Cancela cuando quieras.</p>
-            </div>
+      <!-- Cronómetro -->
+      <div class="card">
+        <h3>Cronómetro de Entrenamiento</h3>
+        <div class="timer-display" id="timer">00:00</div>
+        <div class="timer-controls">
+          <button class="btn btn-primary" onclick="startTimer()">Iniciar</button>
+          <button class="btn" style="background:#ef4444; color:white;" onclick="stopTimer()">Pausar</button>
+          <button class="btn" style="background:#94a3b8; color:white;" onclick="resetTimer()">Reiniciar</button>
         </div>
-    </main>
+      </div>
 
-    <script>
-        // Lógica simulada para el botón de pago
-        document.getElementById('checkout-button').addEventListener('click', function(e) {
-            e.preventDefault();
-            const email = document.querySelector('input[type="email"]').value;
-            if(!email) {
-                alert("Por favor, ingresa tu correo antes de pagar.");
-                return;
-            }
-            alert("Redirigiendo a la pasarela de pagos para el usuario: " + email + "\n\n(Aquí se integra la API de Stripe o Mercado Pago para crear el enlace de suscripción).");
-        });
-    </script>
+      <!-- Agenda de Rutinas -->
+      <div class="card">
+        <h3>Mi Agenda de Rutinas</h3>
+        <div class="form-group" style="margin-top: 1rem;">
+          <input type="text" id="routine-input" placeholder="Ej. Lunes: Pecho y Tríceps">
+        </div>
+        <button class="btn btn-primary" onclick="addRoutine()">Agregar Rutina</button>
+        <div id="routine-list" style="margin-top: 1rem;"></div>
+      </div>
+
+      <!-- Almacén de Dietas -->
+      <div class="card">
+        <h3>Mis Dietas</h3>
+        <div class="form-group" style="margin-top: 1rem;">
+          <textarea id="diet-input" rows="3" placeholder="Ej. Desayuno: 3 huevos, avena y plátano"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="addDiet()">Guardar Dieta</button>
+        <div id="diet-list" style="margin-top: 1rem;"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let currentUser = null;
+    let timerInterval = null;
+    let seconds = 0;
+
+    // Control de Autenticación
+    function handleRegister(e) {
+      e.preventDefault();
+      currentUser = {
+        email: document.getElementById('reg-email').value,
+        weight: parseFloat(document.getElementById('reg-weight').value) || 70
+      };
+      showDashboard();
+    }
+
+    function toggleAuthModal() {
+      if (currentUser) {
+        currentUser = null;
+        document.getElementById('landing-view').classList.remove('hidden');
+        document.getElementById('dashboard-view').classList.add('hidden');
+        document.getElementById('auth-nav-btn').innerText = 'Iniciar Sesión';
+      } else {
+        const email = prompt("Ingresa tu correo para iniciar sesión:");
+        if (email) {
+          currentUser = { email: email, weight: 70 };
+          showDashboard();
+        }
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('landing-view').classList.add('hidden');
+      document.getElementById('dashboard-view').classList.remove('hidden');
+      document.getElementById('auth-nav-btn').innerText = 'Cerrar Sesión';
+      document.getElementById('user-info').innerText = `Usuario: ${currentUser.email} | Peso: ${currentUser.weight} kg`;
+    }
+
+    // Cronómetro
+    function startTimer() {
+      if (timerInterval) return;
+      timerInterval = setInterval(() => {
+        seconds++;
+        const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const secs = String(seconds % 60).padStart(2, '0');
+        document.getElementById('timer').innerText = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    function resetTimer() {
+      stopTimer();
+      seconds = 0;
+      document.getElementById('timer').innerText = '00:00';
+    }
+
+    // Calculadora de Calorías
+    function calculateCalories() {
+      const mins = parseFloat(document.getElementById('workout-mins').value) || 0;
+      // Estimación genérica (MET promedio de ejercicio moderado ~ 6)
+      const burned = Math.round((mins * 6 * 3.5 * currentUser.weight) / 200);
+      document.getElementById('calorie-result').innerText = `Aproximadamente ${burned} kcal quemadas.`;
+    }
+
+    // Guardar Rutinas y Dietas
+    function addRoutine() {
+      const val = document.getElementById('routine-input').value;
+      if (!val) return;
+      const list = document.getElementById('routine-list');
+      list.innerHTML += `<div class="list-item">📌 ${val}</div>`;
+      document.getElementById('routine-input').value = '';
+    }
+
+    function addDiet() {
+      const val = document.getElementById('diet-input').value;
+      if (!val) return;
+      const list = document.getElementById('diet-list');
+      list.innerHTML += `<div class="list-item">🥗 ${val}</div>`;
+      document.getElementById('diet-input').value = '';
+    }
+  </script>
 </body>
 </html>
