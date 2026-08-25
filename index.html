@@ -43,12 +43,15 @@
       padding: 0.75rem;
       font-size: 1rem;
     }
-
     .btn-primary:hover { background: var(--primary-dark); }
+    .btn-small { padding: 0.5rem; font-size: 0.9rem; width: auto; }
 
-    .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
     .hero { text-align: center; margin-bottom: 2rem; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    
+    /* Para que la tabla de dietas ocupe todo el ancho */
+    .full-width { grid-column: 1 / -1; }
 
     .card {
       background: var(--card-bg);
@@ -58,8 +61,11 @@
     }
 
     .form-group { margin-bottom: 1rem; }
+    .form-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .form-row > * { flex: 1; min-width: 120px; }
+    
     label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 0.6rem;
       border: 1px solid #cbd5e1;
@@ -72,6 +78,13 @@
     .timer-display { font-size: 2.5rem; font-weight: bold; text-align: center; margin: 1rem 0; }
     .timer-controls { display: flex; gap: 0.5rem; justify-content: center; }
     .list-item { background: #f1f5f9; padding: 0.5rem; border-radius: 4px; margin-top: 0.5rem; }
+
+    /* Tabla de Dietas */
+    .table-responsive { overflow-x: auto; margin-top: 1rem; }
+    .diet-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .diet-table th, .diet-table td { border: 1px solid #e2e8f0; padding: 0.75rem; text-align: left; font-size: 0.9rem; }
+    .diet-table th { background-color: #f8fafc; font-weight: 600; color: var(--text); }
+    .diet-table td { background-color: #ffffff; }
   </style>
 </head>
 <body>
@@ -118,10 +131,9 @@
         <ul style="list-style: none; margin-bottom: 1rem;">
           <li>✅ Agenda de rutinas ilimitada</li>
           <li>✅ Cronómetro y medidor de calorías</li>
-          <li>✅ Almacenamiento de dietas personalizadas</li>
+          <li>✅ Planificador semanal de dietas</li>
         </ul>
         <button class="btn btn-primary" onclick="alert('Pasarela de pagos pendiente de integración.')">Suscribirse y Pagar</button>
-        <small style="display:block; text-align:center; margin-top:0.5rem; color:var(--text-muted);">Pagos procesados de forma segura.</small>
       </div>
     </div>
   </main>
@@ -134,7 +146,7 @@
     <div class="grid">
       <!-- Calculadora de Calorías -->
       <div class="card">
-        <h3>Calculadora de Calorías Básica</h3>
+        <h3>Calculadora de Calorías</h3>
         <div class="form-group" style="margin-top: 1rem;">
           <label>Minutos de ejercicio realizados:</label>
           <input type="number" id="workout-mins" placeholder="Ej. 45">
@@ -145,7 +157,7 @@
 
       <!-- Cronómetro -->
       <div class="card">
-        <h3>Cronómetro de Entrenamiento</h3>
+        <h3>Cronómetro</h3>
         <div class="timer-display" id="timer">00:00</div>
         <div class="timer-controls">
           <button class="btn btn-primary" onclick="startTimer()">Iniciar</button>
@@ -164,14 +176,53 @@
         <div id="routine-list" style="margin-top: 1rem;"></div>
       </div>
 
-      <!-- Almacén de Dietas -->
-      <div class="card">
-        <h3>Mis Dietas</h3>
-        <div class="form-group" style="margin-top: 1rem;">
-          <textarea id="diet-input" rows="3" placeholder="Ej. Desayuno: 3 huevos, avena y plátano"></textarea>
+      <!-- Planificador Semanal de Dietas -->
+      <div class="card full-width">
+        <h3>Planificador Semanal de Dietas</h3>
+        
+        <!-- Formulario para agregar comidas -->
+        <div class="form-row" style="margin-top: 1rem;">
+          <select id="diet-day">
+            <option value="Lunes">Lunes</option>
+            <option value="Martes">Martes</option>
+            <option value="Miércoles">Miércoles</option>
+            <option value="Jueves">Jueves</option>
+            <option value="Viernes">Viernes</option>
+            <option value="Sábado">Sábado</option>
+            <option value="Domingo">Domingo</option>
+          </select>
+
+          <select id="diet-meal">
+            <option value="desayuno">Desayuno</option>
+            <option value="colacion1">Colación 1</option>
+            <option value="comida">Comida</option>
+            <option value="colacion2">Colación 2</option>
+            <option value="cena">Cena</option>
+          </select>
+
+          <input type="text" id="diet-input" style="flex: 2; min-width: 200px;" placeholder="Ej. 2 Huevos revueltos">
+          <button class="btn btn-primary btn-small" onclick="guardarComida()">Guardar Comida</button>
+          <button class="btn btn-small" style="background: #ef4444; color: white;" onclick="limpiarDietas()">Limpiar Todo</button>
         </div>
-        <button class="btn btn-primary" onclick="addDiet()">Guardar Dieta</button>
-        <div id="diet-list" style="margin-top: 1rem;"></div>
+
+        <!-- Tabla dinámica -->
+        <div class="table-responsive">
+          <table class="diet-table">
+            <thead>
+              <tr>
+                <th>Día</th>
+                <th>Desayuno</th>
+                <th>Colación 1</th>
+                <th>Comida</th>
+                <th>Colación 2</th>
+                <th>Cena</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-dietas-body">
+              <!-- Se llena con JavaScript -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </main>
@@ -180,8 +231,15 @@
     let currentUser = null;
     let timerInterval = null;
     let seconds = 0;
+    const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+    
+    // Iniciar
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarRutinas();
+      renderizarTablaDietas();
+    });
 
-    // Control de Autenticación
+    // --- AUTENTICACIÓN ---
     function handleRegister(e) {
       e.preventDefault();
       currentUser = {
@@ -213,7 +271,7 @@
       document.getElementById('user-info').innerText = `Usuario: ${currentUser.email} | Peso: ${currentUser.weight} kg`;
     }
 
-    // Cronómetro
+    // --- CRONÓMETRO ---
     function startTimer() {
       if (timerInterval) return;
       timerInterval = setInterval(() => {
@@ -223,41 +281,83 @@
         document.getElementById('timer').innerText = `${mins}:${secs}`;
       }, 1000);
     }
+    function stopTimer() { clearInterval(timerInterval); timerInterval = null; }
+    function resetTimer() { stopTimer(); seconds = 0; document.getElementById('timer').innerText = '00:00'; }
 
-    function stopTimer() {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-
-    function resetTimer() {
-      stopTimer();
-      seconds = 0;
-      document.getElementById('timer').innerText = '00:00';
-    }
-
-    // Calculadora de Calorías
+    // --- CALORÍAS ---
     function calculateCalories() {
       const mins = parseFloat(document.getElementById('workout-mins').value) || 0;
-      // Estimación genérica (MET promedio de ejercicio moderado ~ 6)
       const burned = Math.round((mins * 6 * 3.5 * currentUser.weight) / 200);
       document.getElementById('calorie-result').innerText = `Aproximadamente ${burned} kcal quemadas.`;
     }
 
-    // Guardar Rutinas y Dietas
+    // --- RUTINAS ---
     function addRoutine() {
       const val = document.getElementById('routine-input').value;
       if (!val) return;
-      const list = document.getElementById('routine-list');
-      list.innerHTML += `<div class="list-item">📌 ${val}</div>`;
+      let rutinas = JSON.parse(localStorage.getItem('fittrack_rutinas')) || [];
+      rutinas.push(val);
+      localStorage.setItem('fittrack_rutinas', JSON.stringify(rutinas));
       document.getElementById('routine-input').value = '';
+      cargarRutinas();
+    }
+    function cargarRutinas() {
+      const list = document.getElementById('routine-list');
+      const rutinas = JSON.parse(localStorage.getItem('fittrack_rutinas')) || [];
+      list.innerHTML = '';
+      rutinas.forEach(r => list.innerHTML += `<div class="list-item">📌 ${r}</div>`);
     }
 
-    function addDiet() {
-      const val = document.getElementById('diet-input').value;
-      if (!val) return;
-      const list = document.getElementById('diet-list');
-      list.innerHTML += `<div class="list-item">🥗 ${val}</div>`;
+    // --- TABLA DE DIETAS ---
+    function obtenerDietas() {
+      // Estructura base si está vacío
+      const base = {};
+      diasSemana.forEach(d => {
+        base[d] = { desayuno: "", colacion1: "", comida: "", colacion2: "", cena: "" };
+      });
+      return JSON.parse(localStorage.getItem('fittrack_dietas')) || base;
+    }
+
+    function guardarComida() {
+      const dia = document.getElementById('diet-day').value;
+      const comidaTipo = document.getElementById('diet-meal').value;
+      const alimento = document.getElementById('diet-input').value;
+      
+      if (!alimento.trim()) return;
+
+      let dietas = obtenerDietas();
+      dietas[dia][comidaTipo] = alimento;
+      localStorage.setItem('fittrack_dietas', JSON.stringify(dietas));
+      
       document.getElementById('diet-input').value = '';
+      renderizarTablaDietas();
+    }
+
+    function renderizarTablaDietas() {
+      const tbody = document.getElementById('tabla-dietas-body');
+      const dietas = obtenerDietas();
+      tbody.innerHTML = '';
+
+      diasSemana.forEach(dia => {
+        const d = dietas[dia];
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${dia}</strong></td>
+            <td>${d.desayuno || '-'}</td>
+            <td>${d.colacion1 || '-'}</td>
+            <td>${d.comida || '-'}</td>
+            <td>${d.colacion2 || '-'}</td>
+            <td>${d.cena || '-'}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function limpiarDietas() {
+      if(confirm("¿Estás seguro de borrar todas las dietas de la semana?")) {
+        localStorage.removeItem('fittrack_dietas');
+        renderizarTablaDietas();
+      }
     }
   </script>
 </body>
