@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTrack Pro - Tu Agenda de Entrenamiento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- Navegación -->
+    <nav class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center">
+        <h1 class="text-2xl font-bold">FitTrack Pro</h1>
+        <button class="bg-white text-blue-600 px-4 py-2 rounded font-semibold hover:bg-gray-100">Iniciar Sesión</button>
+    </nav>
+
+    <!-- Sección de Precios y Registro -->
+    <main class="max-w-4xl mx-auto mt-10 p-6">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-extrabold text-gray-900 mb-4">Transforma tu Rutina Hoy</h2>
+            <p class="text-lg text-gray-600">Cronómetro integrado, cálculo de calorías, almacenamiento de dietas y rutinas personalizadas. Todo en una sola cuenta.</p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-xl overflow-hidden md:flex">
+            <!-- Formulario de Registro -->
+            <div class="md:w-1/2 p-8 border-r">
+                <h3 class="text-2xl font-bold mb-4">Crea tu Cuenta</h3>
+                <form id="signup-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                        <input type="email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Contraseña</label>
+                        <input type="password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Peso actual (kg) - Para calcular calorías</label>
+                        <input type="number" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Resumen de Suscripción -->
+            <div class="md:w-1/2 p-8 bg-gray-50 flex flex-col justify-center">
+                <h3 class="text-2xl font-bold mb-2 text-center">Suscripción Premium</h3>
+                <p class="text-4xl font-extrabold text-center text-blue-600 mb-6">$199 <span class="text-lg text-gray-500 font-medium">/ mes</span></p>
+                
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center">✅ <span class="ml-2">Agenda de rutinas ilimitada</span></li>
+                    <li class="flex items-center">✅ <span class="ml-2">Cronómetro y medidor de calorías</span></li>
+                    <li class="flex items-center">✅ <span class="ml-2">Almacenamiento de dietas personalizadas</span></li>
+                    <li class="flex items-center">✅ <span class="ml-2">Acceso multiplataforma</span></li>
+                </ul>
+
+                <!-- Botón de Pago (Aquí se conecta Stripe o Mercado Pago) -->
+                <button id="checkout-button" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded hover:bg-blue-700 transition duration-300">
+                    Suscribirse y Pagar
+                </button>
+                <p class="text-xs text-gray-400 mt-4 text-center">Pagos seguros procesados por Stripe / Mercado Pago. Cancela cuando quieras.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Lógica simulada para el botón de pago
+        document.getElementById('checkout-button').addEventListener('click', function(e) {
+            e.preventDefault();
+            const email = document.querySelector('input[type="email"]').value;
+            if(!email) {
+                alert("Por favor, ingresa tu correo antes de pagar.");
+                return;
+            }
+            alert("Redirigiendo a la pasarela de pagos para el usuario: " + email + "\n\n(Aquí se integra la API de Stripe o Mercado Pago para crear el enlace de suscripción).");
+        });
+    </script>
+</body>
+</html>
