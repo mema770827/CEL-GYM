@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - FitTrack Pro</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --success: #10b981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); }
+
+    header {
+      background: #1e293b;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+    
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      border-top: 4px solid var(--primary);
+    }
+    .metric-card h3 { color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem; }
+    .metric-card p { font-size: 2rem; font-weight: bold; color: var(--text); }
+
+    .card {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    /* Tabla de Datos */
+    .table-responsive { overflow-x: auto; margin-top: 1rem; }
+    .data-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    .data-table th, .data-table td { border-bottom: 1px solid #e2e8f0; padding: 1rem; text-align: left; }
+    .data-table th { background-color: #f8fafc; font-weight: 600; color: var(--text-muted); }
+    
+    .badge {
+      background: #d1fae5;
+      color: #065f46;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>Dashboard Administrativo - FitTrack Pro</h2>
+    <a href="index.html" style="color: white; text-decoration: none;">Volver a la App</a>
+  </header>
+
+  <main class="container">
+    
+    <!-- Resumen de Métricas -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h3>Usuarios Registrados</h3>
+        <p id="total-users">0</p>
+      </div>
+      <div class="metric-card" style="border-top-color: var(--success);">
+        <h3>Ingresos Totales (Suscripciones)</h3>
+        <p id="total-sales">$0.00</p>
+      </div>
+    </div>
+
+    <!-- Tabla de Usuarios (Correos) -->
+    <div class="card">
+      <h3>Base de Datos de Clientes</h3>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Correo Electrónico</th>
+              <th>Peso Inicial</th>
+              <th>Estado de Cuenta</th>
+              <th>Fecha de Registro</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <!-- Los datos se insertarán con JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // Datos simulados para demostración del panel
+    // En el futuro, estos datos vendrán de una base de datos real (ej. Firebase)
+    const mockUsers = [
+      { email: "cliente1@gmail.com", peso: "72 kg", estado: "Premium", fecha: "2023-10-24" },
+      { email: "usuario_fit@hotmail.com", peso: "85 kg", estado: "Premium", fecha: "2023-10-25" },
+      { email: "maria.gomez@yahoo.com", peso: "60 kg", estado: "Gratuito", fecha: "2023-10-26" }
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarDatos();
+    });
+
+    function cargarDatos() {
+      const tbody = document.getElementById('users-table-body');
+      let totalVentas = 0;
+      let totalUsuarios = mockUsers.length;
+
+      mockUsers.forEach(user => {
+        // Si el estado es Premium, sumar a las ventas ($199)
+        if(user.estado === "Premium") {
+          totalVentas += 199;
+        }
+
+        const badgeStyle = user.estado === "Premium" ? "background: #d1fae5; color: #065f46;" : "background: #f1f5f9; color: #475569;";
+
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${user.email}</strong></td>
+            <td>${user.peso}</td>
+            <td><span class="badge" style="${badgeStyle}">${user.estado}</span></td>
+            <td>${user.fecha}</td>
+          </tr>
+        `;
+      });
+
+      document.getElementById('total-users').innerText = totalUsuarios;
+      document.getElementById('total-sales').innerText = `$${totalVentas}.00`;
+    }
+  </script>
+</body>
+</html>
